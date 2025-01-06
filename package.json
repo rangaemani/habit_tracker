@@ -24,6 +24,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.39.7",
     "chart.js": "^4.4.1",
+    "supabase": "^2.2.1",
     "svelte-chartjs": "^3.1.5",
     "date-fns": "^3.3.1"
   }

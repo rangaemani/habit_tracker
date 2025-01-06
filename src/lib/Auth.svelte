@@ -15,9 +15,10 @@
     error = '';
     message = '';
 
-    const { data, error: authError } = type === 'signup'
-      ? await supabase.auth.signUp({ email, password })
-      : await supabase.auth.signInWithPassword({ email, password });
+    const { data, error: authError } =
+      type === 'signup'
+        ? await supabase.auth.signUp({ email, password })
+        : await supabase.auth.signInWithPassword({ email, password });
 
     if (authError) {
       error = authError.message;
@@ -38,46 +39,72 @@
     error = '';
     message = '';
 
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email);
+    try {
+      const { data, error: resetError } =
+        await supabase.auth.resetPasswordForEmail(email);
 
-    if (resetError) {
-      error = resetError.message;
-    } else {
-      message = 'Password reset instructions sent to your email';
-      isResetMode = false;
+      if (resetError) {
+        console.error('Reset password error:', resetError);
+        error =
+          resetError.message || 'An error occurred while resetting password';
+      } else {
+        message = 'Password reset instructions sent to your email';
+        isResetMode = false;
+      }
+    } catch (error) {
+      console.error('Password reset error:', error);
+      error = 'An unexpected error occurred while resetting password';
+    } finally {
+      loading = false;
     }
-
-    loading = false;
   }
 </script>
 
 <div class="min-h-[80vh] flex items-center justify-center">
-  <div 
-    in:fly="{{ y: 20, duration: 500 }}"
+  <div
+    in:fly={{ y: 20, duration: 500 }}
     class="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-lg"
   >
     <div>
       <div class="flex justify-center">
-        <svg class="w-16 h-16 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        <svg
+          class="w-16 h-16 text-indigo-600"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+          />
         </svg>
       </div>
       <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
         {#if loading}
           <div class="flex justify-center">
-            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600"></div>
+            <div
+              class="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600"
+            ></div>
           </div>
         {:else}
           {isResetMode ? 'Reset Password' : 'Welcome to Habit Tracker'}
         {/if}
       </h2>
     </div>
-    
-    <form class="mt-8 space-y-6" on:submit|preventDefault>
+
+    <form
+      class="mt-8 space-y-6"
+      on:submit|preventDefault
+    >
       <div class="rounded-md shadow-sm {isResetMode ? '' : '-space-y-px'}">
-        <div>
+        <div class="mb-2">
           <input
             bind:value={email}
+            on:keydown={(e) => {
+              if (e.key === 'Enter') handleAuth('login');
+            }}
             type="email"
             required
             class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm transition-all duration-200"
@@ -88,9 +115,12 @@
           <div>
             <input
               bind:value={password}
+              on:keydown={(e) => {
+                if (e.key === 'Enter') handleAuth('login');
+              }}
               type="password"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm transition-all duration-200"
+              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm transition-all duration-200"
               placeholder="Password"
             />
           </div>
@@ -98,8 +128,8 @@
       </div>
 
       {#if error}
-        <div 
-          in:fade="{{ duration: 200 }}"
+        <div
+          in:fade={{ duration: 200 }}
           class="text-red-500 text-sm bg-red-50 p-3 rounded-md"
         >
           {error}
@@ -107,8 +137,8 @@
       {/if}
 
       {#if message}
-        <div 
-          in:fade="{{ duration: 200 }}"
+        <div
+          in:fade={{ duration: 200 }}
           class="text-green-500 text-sm bg-green-50 p-3 rounded-md"
         >
           {message}

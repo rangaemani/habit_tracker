@@ -12,7 +12,7 @@
     LineElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
   } from 'chart.js';
 
   ChartJS.register(
@@ -25,9 +25,12 @@
     Legend
   );
 
-  let completionData = {
+  let completionData: {
+    labels: string[];
+    datasets: any[];
+  } = {
     labels: [],
-    datasets: []
+    datasets: [],
   };
 
   async function loadAnalytics() {
@@ -43,15 +46,17 @@
       .in('date', dates);
 
     completionData = {
-      labels: dates.map(date => format(new Date(date), 'MMM d')),
-      datasets: [{
-        label: 'Habits Completed',
-        data: dates.map(date => 
-          checks?.filter(check => check.date === date).length || 0
-        ),
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1
-      }]
+      labels: dates.map((date) => format(new Date(date), 'MMM d')),
+      datasets: [
+        {
+          label: 'Habits Completed',
+          data: dates.map(
+            (date) => checks?.filter((check) => check.date === date).length || 0
+          ),
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1,
+        },
+      ],
     };
   }
 
@@ -61,8 +66,13 @@
 </script>
 
 <div class="p-4">
-  <h2 class="text-xl font-bold mb-4">Analytics</h2>
+  <h2 class="text-xl font-bold mb-4">
+    Analytics, Week of {format(new Date(), 'yyyy-MM-dd')}
+  </h2>
   <div class="bg-white p-4 rounded shadow">
-    <Line data={completionData} options={{ responsive: true }} />
+    <Line
+      data={completionData}
+      options={{ responsive: true }}
+    />
   </div>
 </div>

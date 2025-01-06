@@ -1,4 +1,8 @@
-import { writable } from 'svelte/store';
+import { writable } from "svelte/store";
 
-export const habits = writable([]);
-export const user = writable(null);
+type User = {
+    id: string;
+};
+
+export const habits = writable<any>([]);
+export const user = writable<User | null>(null);
