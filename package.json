@@ -3,9 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://rangaemani.github.io/habit_tracker",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json && tsc -p tsconfig.node.json"
   },
@@ -24,6 +27,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.39.7",
     "chart.js": "^4.4.1",
+    "gh-pages": "^6.3.0",
     "supabase": "^2.2.1",
     "svelte-chartjs": "^3.1.5",
     "date-fns": "^3.3.1"
